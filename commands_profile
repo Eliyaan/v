@@ -1,0 +1,3 @@
+./v -prof profile -cc gcc self
+./v -show-timings -o v.c self
+cat profile | grep sumtype_memdup

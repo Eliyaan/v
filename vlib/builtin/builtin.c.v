@@ -782,6 +782,10 @@ pub fn free(ptr voidptr) {
 	}
 }
 
+@[unsafe; markused]
+pub fn sumtype_memdup(src voidptr, sz isize) voidptr {
+	return memdup(src, sz)
+}
 // memdup dynamically allocates a `sz` bytes block of memory on the heap
 // memdup then copies the contents of `src` into the allocated space and
 // returns a pointer to the newly allocated space.

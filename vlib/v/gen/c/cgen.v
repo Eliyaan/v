@@ -2859,7 +2859,7 @@ fn (mut g Gen) write_sumtype_casting_fn(fun SumtypeCastingFn) {
 		g.definitions.writeln('${exp_cname} ${fun.fn_name}(${got_cname}* x, bool is_mut);')
 		sb.writeln('${exp_cname} ${fun.fn_name}(${got_cname}* x, bool is_mut) {')
 		sb.writeln('\t${got_cname}* ptr = x;')
-		sb.writeln('\tif (!is_mut) { ptr = builtin__memdup(x, sizeof(${got_cname})); }')
+		sb.writeln('\tif (!is_mut) { ptr = builtin__sumtype_memdup(x, sizeof(${got_cname})); }')
 	}
 	for embed_hierarchy in g.table.get_embeds(got_sym) {
 		// last embed in the hierarchy
@@ -2876,7 +2876,7 @@ fn (mut g Gen) write_sumtype_casting_fn(fun SumtypeCastingFn) {
 			accessor += embed_name
 		}
 		// if the variable is not used, the C compiler will optimize it away
-		sb.writeln('\t${embed_cname}* ${embed_name}_ptr = builtin__memdup(${accessor}, sizeof(${embed_cname}));')
+		sb.writeln('\t${embed_cname}* ${embed_name}_ptr = builtin__sumtype_memdup(${accessor}, sizeof(${embed_cname}));')
 	}
 	sb.write_string('\treturn (${exp_cname}){ ._${variant_name} = ptr, ._typ = ${type_idx}')
 	for field in (exp_sym.info as ast.SumType).fields {
@@ -5736,7 +5736,7 @@ fn (mut g Gen) cast_expr(node ast.CastExpr) {
 				&& g.table.sumtype_has_variant(sym.info.parent_type, expr_typ, false)
 			if alias_to_sumtype {
 				expr_styp := g.styp(expr_typ)
-				g.write('{._${g.table.sym(expr_typ).cname}=builtin__memdup(ADDR(${expr_styp}, ')
+				g.write('{._${g.table.sym(expr_typ).cname}=builtin__sumtype_memdup(ADDR(${expr_styp}, ')
 				g.expr(node.expr)
 				g.write('), sizeof(${expr_styp})),._typ=${u32(expr_typ)}})')
 			} else {
